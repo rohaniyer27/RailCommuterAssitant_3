@@ -6,13 +6,28 @@ import { FlatList } from 'react-native-gesture-handler';
 import {Appbar, Chip, Button} from 'react-native-paper'
 import { Buffer } from 'buffer';
 import DatePicker from 'react-native-date-picker'
+import {USERNAME,PASSWORD} from '/Users/rohaniyer/RailCommuterAssitant_3/password.tsx'
 
-
+// console.log(api)
 const handlePress=async(from:string,to?:string,date:string) => {
   console.log(from,to,date);
+  selected_date = date.split('/',3)
+  console.log(selected_date[2])
 
-  const username = 'rttapi_RohanIyer27';
-  const password = 'ed1ebf49c3fa91238e4d9eeae729b0d84d3a43bd';
+  date = selected_date[1]
+  month = selected_date[0]
+  year = selected_date[2]
+  if (month.length < 2) {
+    date = year+'/'+0+month+'/'+date
+  }
+  else {
+    date = year+'/'+month+'/'+date
+  }
+  console.log(date)
+  // console.log(date.split('/',3))
+
+  const username = USERNAME;
+  const password = PASSWORD;
   //  if only from then https://api.rtt.io/api/v1/json/search/${from} 
   // if from + to then https://api.rtt.io/api/v1/json/search/${from}/to/${to}
   // if only date is given then show train in ascending order and start with train after current time https://api.rtt.io/api/v1/json/search/${from}/year/month/day
@@ -23,21 +38,21 @@ const handlePress=async(from:string,to?:string,date:string) => {
     Alert.alert("Please select a station")
   }
   else if (from.length > 0 && to.length == 0) {
-    if (date.length > 0) {
-      let myURL=`https://api.rtt.io/api/v1/json/search/${from}/${date?.getFullYear}/${date?.getMonth}/${date?.getDate}`;
+    //if (date.length > 0) {
+      let myURL=`https://api.rtt.io/api/v1/json/search/${from}/${date}`;
       return myURL
-    } 
-    let myURL=`https://api.rtt.io/api/v1/json/search/${from}`;
-    return myURL
+    //} 
+    //let myURL=`https://api.rtt.io/api/v1/json/search/${from}`;
+    //return myURL
 
   }
   else if (from.length > 0 && to.length > 0) {
-    if (date.length > 0) {
-      let myURL=`https://api.rtt.io/api/v1/json/search/${from}/to/${to}/${date?.getFullYear}/${date?.getMonth}/${date?.getDate}`;
+   // if (date.length > 0) {
+      let myURL=`https://api.rtt.io/api/v1/json/search/${from}/to/${to}/${date}`;
       return myURL
-    }
-    let myURL=`https://api.rtt.io/api/v1/json/search/${from}/to/${to}`;
-    return myURL
+    //}
+    //let myURL=`https://api.rtt.io/api/v1/json/search/${from}/to/${to}`;
+    //return myURL
 
   }
 }
@@ -99,7 +114,7 @@ const App = () => {
         }}
         placeholderTextColor='gray'
       />
-      <Button title="Date" onPress={() => setOpen(true)}  
+      <Button title="Date" id='DateButton' onPress={() => setOpen(true)}  
         style={{
           borderWidth: 1,
           borderRadius: 1,
@@ -108,9 +123,10 @@ const App = () => {
           placeholder: 'Date',
           color:'black'
           
+          
         }} 
         placeholderTextColor='gray'
-         />
+         >{date.toLocaleDateString()}</Button>
       <DatePicker
         modal
         open={open}
@@ -118,14 +134,17 @@ const App = () => {
         onConfirm={(date) => {
           setOpen(false)
           setDate(date)
+          
         }}
         onCancel={() => {
           setOpen(false)
         
         }}
         
+        
       />
-      <Button mode="contained" onPress= {()=>handlePress(from,to,date)}>Search</Button>
+       
+      <Button mode="contained" onPress= {()=>handlePress(from,to,date.toLocaleDateString())}>Search</Button>
     </SafeAreaView>
   )
 }
